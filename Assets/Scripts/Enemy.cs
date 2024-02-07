@@ -4,8 +4,31 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    void OnParticleCollision(GameObject other) {
-        print("Enemy hit by laser");
+    [SerializeField] GameObject deathVFX;
+    [SerializeField] Transform parent;
+    [SerializeField] int score = 30;
+
+    ScoreBoard scoreBoard;
+
+    void Start() {
+        scoreBoard = FindObjectOfType<ScoreBoard>();    
+    }
+
+    void OnParticleCollision(GameObject other)
+    {
+        AddScore();
+        DeathSequence();
+    }
+
+    private void AddScore()
+    {
+        scoreBoard.IncreaseScore(score);
+    }
+
+    private void DeathSequence()
+    {
+        GameObject vfx = Instantiate(deathVFX, transform.position, Quaternion.identity);
+        vfx.transform.parent = parent;
         Destroy(gameObject);
     }
 }
