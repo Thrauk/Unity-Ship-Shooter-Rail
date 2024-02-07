@@ -1,17 +1,34 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] InputAction movement;
-    [SerializeField] float controlSpeed = 30f;
-    [SerializeField] float xRange = 10f;
-    [SerializeField] float yRange = 7f;
+    [Header("General Setup Settings")]
+    [Tooltip("Input Actions keybinds")] [SerializeField] InputAction movement;
+    [Tooltip("How fast the ship is going is going")] [SerializeField] float controlSpeed = 30f;
+    [Tooltip("How fast player moves horizontally")] [SerializeField] float xRange = 10f;
+    [Tooltip("How fast player moves vertically")] [SerializeField] float yRange = 7f;
+
+    [Header("Laser gun array")]
+    [Tooltip("Add all player lasers here")] [SerializeField] GameObject[] lasers;
+
+
+    [Header("Screen position based tuning")]
+    [SerializeField] float positionPitchFactor = -2f;
+    [SerializeField] float positionYawFactor = 2f;
+
+    [Header("Screen position based tuning")]
+    [SerializeField] float controlPitchFactor = -2f;
+    [SerializeField] float controlRotateFactor = -20f;
+
+    float xThrow, yThrow;
 
     // Start is called before the first frame update
-    void Start() 
+    void Start()
     {
 
     }
@@ -31,16 +48,29 @@ public class PlayerController : MonoBehaviour
     {
         ProcessTranslation();
         ProcessRotation();
+        ProcessFiring();
     }
 
-    void ProcessRotation() {
-        transform.localRotation = Quaternion.Euler(-30f, 30f, 0f);
+    void ProcessRotation()
+    {
+        // Pitch
+        float pitchDueToPosition = transform.localPosition.y * positionPitchFactor;
+        float pitchDueToControlThrow = yThrow * controlPitchFactor;
+
+        float pitch = pitchDueToPosition + pitchDueToControlThrow;
+        float yaw = transform.localPosition.x * positionYawFactor;
+        float roll = xThrow * controlRotateFactor;
+
+        transform.localRotation = Quaternion.Euler(pitch, yaw, roll);
     }
 
     private void ProcessTranslation()
     {
-        float xThrow = movement.ReadValue<Vector2>().x;
-        float yThrow = movement.ReadValue<Vector2>().y;
+        xThrow = Input.GetAxis("Horizontal");
+        yThrow = Input.GetAxis("Vertical");
+
+        // xThrow = movement.ReadValue<Vector2>().x;
+        // yThrow = movement.ReadValue<Vector2>().y;
 
         float xOffset = xThrow * Time.deltaTime * controlSpeed;
         float yOffset = yThrow * Time.deltaTime * controlSpeed;
@@ -65,4 +95,42 @@ public class PlayerController : MonoBehaviour
 
         // float verticalThrow = Input.GetAxis("Vertical");
     }
+
+    void ProcessFiring()
+    {
+        // if pushing fire button
+        // then print shooting
+        if (Input.GetButton("Fire1"))
+        {
+            SetLasersActive(true);
+        }
+        else
+        {
+            SetLasersActive(false);
+        }
+    }
+
+    void SetLasersActive(bool isActive)
+    {
+        foreach (GameObject laser in lasers)
+        {
+            // laser.SetActive(true);
+            var emissionModule = laser.GetComponent<ParticleSystem>().emission;
+            emissionModule.enabled = isActive;
+        }
+    }
+
+    // void DeactivateLasers()
+    // {
+    //     foreach (GameObject laser in lasers)
+    //     {
+    //         var emissionModule = laser.GetComponent<ParticleSystem>().emission;
+    //         emissionModule.enabled = false;
+    //         // laser.SetActive(false);
+    //         // ParticleSystem particleSystem = laser.GetComponent<ParticleSystem>();
+    //         // particleSystem.Stop();
+    //     }
+    // }
+
+
 }
