@@ -5,30 +5,52 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] GameObject deathVFX;
-    [SerializeField] Transform parent;
+    [SerializeField] GameObject takeHitVFX;
+    GameObject parent;
     [SerializeField] int score = 30;
+    [SerializeField] int hitsToKill = 2;
 
     ScoreBoard scoreBoard;
 
+    int hitsTaken = 0;
+
     void Start() {
-        scoreBoard = FindObjectOfType<ScoreBoard>();    
+        scoreBoard = FindObjectOfType<ScoreBoard>();
+        parent = GameObject.FindWithTag("SpawnAtRuntime");
+        Rigidbody rb = gameObject.AddComponent<Rigidbody>();
+        rb.useGravity = false;
     }
 
     void OnParticleCollision(GameObject other)
     {
-        AddScore();
-        DeathSequence();
+        TakeHit();
     }
 
-    private void AddScore()
+    private void AddScore(int score)
     {
         scoreBoard.IncreaseScore(score);
+    }
+
+    void TakeHit() {
+        hitsTaken++;
+        if(hitsTaken >= hitsToKill) {
+            DeathSequence();
+            AddScore(score*2);
+        } else {
+            HitSequence();
+            AddScore(score);
+        }
     }
 
     private void DeathSequence()
     {
         GameObject vfx = Instantiate(deathVFX, transform.position, Quaternion.identity);
-        vfx.transform.parent = parent;
+        vfx.transform.parent = parent.transform;
         Destroy(gameObject);
+    }
+
+    private void HitSequence() {
+        GameObject vfx = Instantiate(takeHitVFX, transform.position, Quaternion.identity);
+        vfx.transform.parent = parent.transform;
     }
 }
