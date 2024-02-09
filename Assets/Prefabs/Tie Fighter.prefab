@@ -343,7 +343,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 21.07
+  m_Radius: 33.58
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7202310377626738087
 MonoBehaviour:
@@ -359,6 +359,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   deathVFX: {fileID: 6855801379556692492, guid: 9ec295a8fd45939478fa2490ca71ab56, type: 3}
   takeHitVFX: {fileID: 6855801379556692492, guid: 933adb3ca8bd2c546a25965d6c3f5810, type: 3}
-  parent: {fileID: 0}
   score: 30
-  hitsToKill: 5
+  hitsToKill: 2

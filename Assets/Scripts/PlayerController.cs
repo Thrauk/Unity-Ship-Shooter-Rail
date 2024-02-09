@@ -24,13 +24,15 @@ public class PlayerController : MonoBehaviour
     [Header("Screen position based tuning")]
     [SerializeField] float controlPitchFactor = -2f;
     [SerializeField] float controlRotateFactor = -20f;
+    // [SerializeField] AudioClip shootingLaserSound;
 
     float xThrow, yThrow;
+    AudioSource audioSource;
 
     // Start is called before the first frame update
     void Start()
     {
-
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void OnEnable()
@@ -102,6 +104,9 @@ public class PlayerController : MonoBehaviour
         // then print shooting
         if (Input.GetButton("Fire1"))
         {
+            // if(!audioSource.isPlaying) {
+            //     // audioSource.PlayOneShot(shootingLaserSound);
+            // }
             SetLasersActive(true);
         }
         else

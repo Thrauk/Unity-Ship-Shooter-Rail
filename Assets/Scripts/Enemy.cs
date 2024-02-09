@@ -14,7 +14,8 @@ public class Enemy : MonoBehaviour
 
     int hitsTaken = 0;
 
-    void Start() {
+    void Start()
+    {
         scoreBoard = FindObjectOfType<ScoreBoard>();
         parent = GameObject.FindWithTag("SpawnAtRuntime");
         Rigidbody rb = gameObject.AddComponent<Rigidbody>();
@@ -31,25 +32,30 @@ public class Enemy : MonoBehaviour
         scoreBoard.IncreaseScore(score);
     }
 
-    void TakeHit() {
+    void TakeHit()
+    {
         hitsTaken++;
-        if(hitsTaken >= hitsToKill) {
+        if (hitsTaken >= hitsToKill)
+        {
             DeathSequence();
-            AddScore(score*2);
-        } else {
+        }
+        else
+        {
             HitSequence();
-            AddScore(score);
         }
     }
 
     private void DeathSequence()
     {
+        AddScore(score * 2);
         GameObject vfx = Instantiate(deathVFX, transform.position, Quaternion.identity);
         vfx.transform.parent = parent.transform;
         Destroy(gameObject);
     }
 
-    private void HitSequence() {
+    private void HitSequence()
+    {
+        AddScore(score);
         GameObject vfx = Instantiate(takeHitVFX, transform.position, Quaternion.identity);
         vfx.transform.parent = parent.transform;
     }
